@@ -1,7 +1,3 @@
-//Daniel Song
-//Program Description
-//May 18, 2021
-
 public class Play2048
 {
    public static void main(String[] args) 
