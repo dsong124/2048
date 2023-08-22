@@ -1,5 +1,3 @@
-# 2048
-Customized 2048 game coded using Java
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
