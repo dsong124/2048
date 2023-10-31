@@ -10,7 +10,7 @@ import javax.sound.sampled.Clip;
 
 //Daniel Song
 //Program Description
-//May 18, 2021
+
 
 public class Board2048
 {
