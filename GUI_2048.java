@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 
 //Daniel Song
 //Program Description: 2048 Game Runner
-//Jun 9, 2021
+
 //This class is just calling on the code; director
 public class GUI_2048 extends JPanel implements KeyListener
 {
