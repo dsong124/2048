@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 //Daniel Song
 //Program Description: a tile for the game of 2048 
-//Jun 10, 2021
+
 
 public class Tile_2048
 {
