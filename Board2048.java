@@ -10,22 +10,25 @@ import javax.sound.sampled.Clip;
 
 //Daniel Song
 //Program Description
+//May 18, 2021
 
-
-public class Board2048
+public class Board_2048
 {
    //Instance Variables
    private Tile_2048[][] board;
    private int score;
+   private int highestScore;
+   
    
    //Constructor - giving variables a value
-   public Board2048()
+   public Board_2048()
    {
-      board = new Tile_2048[6][6];
+      board = new Tile_2048[4][4];
       //initialize all tile values to zero
       for(int r = 0; r < board.length; r++)
          for(int c = 0; c < board[r].length; c++)
                board[r][c] = new Tile_2048(0);
+      
       
       
   
@@ -33,6 +36,8 @@ public class Board2048
      spawnValue(2);      
 
    }
+   
+   
    
    //Methods 
    public void drawBoard(Graphics2D g2) //tiles values
@@ -53,8 +58,13 @@ public class Board2048
          for(int c = 0; c < board[r].length; c++)
             board[r][c].setValue(0);
       
-      score = 0;
-      
+     
+  	    if (score > highestScore) {
+  	        highestScore = score;
+  	    }
+  	
+  	    score = 0;
+  	  
       
       spawnValue(2);
       spawnValue(2);
@@ -65,15 +75,26 @@ public class Board2048
       return !canMoveLeft() && !canMoveRight() && !canMoveUp() && !canMoveDown();
    }
    
+   public void newScore(Graphics2D g2) {
+	    g2.setColor(Color.BLACK);
+	    g2.setFont(new Font("Arial", Font.BOLD, 24));
+	    g2.drawString("Score: " + score, 10, 30);
+	    g2.drawString("Highest Score: " + highestScore, 130, 250);
+	}
+   
+   	
+   
    public void drawGameOverMessage(Graphics2D g2)
    {
       g2.setColor(new Color(255, 255, 255, 200));
-      g2.drawRect(25,170,350,60);
+      g2.drawRect(25,170,350,85);
       g2.setColor(Color.BLUE);
       g2.setFont(new Font("Cooper Black", Font.PLAIN, 30));
       g2.drawString("GAME OVER!",100,200);
       g2.setFont(new Font("Cooper Black", Font.PLAIN, 16));
       g2.drawString("Press 'R' to reset",130,220);
+	    g2.drawString("Highest Score: " + highestScore, 130, 250);
+
       
       
       
@@ -83,18 +104,18 @@ public class Board2048
    {
       g2.setColor(new Color(119, 110, 101));
       g2.setFont(new Font("Cooper Black", Font.BOLD, 50));
-      g2.drawString("2048", 410, 100);
+     // g2.drawString("2048", 410, 100);
       FontMetrics fm = g2.getFontMetrics();
       int width = fm.stringWidth(score + "");
       g2.setFont(new Font("Cooper Black", Font.BOLD, 25));
-      g2.drawString("Score: " + score, 410, 200);
-//      g2.setFont(new Font("Cooper Black", Font.BOLD, 20));
+      g2.drawString("Score: " + score, 600, 750);
+      g2.setFont(new Font("Cooper Black", Font.BOLD, 20));
 //      g2.drawString("HOW TO PLAY: ", 410, 300);
 //      g2.setFont(new Font("Cooper Black", Font.BOLD, 16));
 //      g2.drawString("Use your arrow keys to ", 410, 320);
 //      g2.drawString("move the tiles. Tiles ", 410, 340);
 //      g2.drawString("with the same number ", 410, 360);
-//      g2.drawString("merge into one when ", 410, 380);
+//      g2.drawString("can merge into one when ", 410, 380);
 //      g2.drawString("they touch. ", 410, 400);
    }
    
@@ -109,56 +130,58 @@ public class Board2048
       System.out.println();
    }
    
-   public void moveLeft() 
-   {
-      boolean[][] combined = new boolean[board.length][board[0].length];
-      for(int r = 0; r < board.length; r++)
-      {
-         for(int c = 1; c < board[0].length; c++) // if this is zero
-         {
-            if(board[r][c].getValue() !=0) // if not a zero
-            {
-               //col is ... the column to the left of c with the first non-zero value to its left
-               int col = c;
-               while(col-1 >= 0 && board[r][col-1].getValue() == 0) 
-                  col--; // column should decrease          
-               
-               //if col makes it to column 0 then move to that column
-               if (col == 0)
-               {
-                  board[r][col].setValue(board[r][c].getValue());
-                  board[r][c].setValue(0);
-                //  System.out.println("Maximum Move");
-               }
-               //if col is not the first column, see if col can combine with left neighbor
-               else if(!combined[r][col-1] && board[r][col-1].getValue() == (board[r][c].getValue()))
-               {
-                  int addScore = board[r][c-1].getValue()+ board[r][c].getValue(); 
-//                  if ( board[r][c].getValue() != 0 )
-//                  {
-//                      score += addScore;
-//                  }
-                  board[r][col-1].setValue(board[r][c-1].getValue()+ board[r][c].getValue());                
-                  board[r][c].setValue(0);
-                  combined[r][col-1] = true;
-                  score+=addScore;
-                
-               }
-              
-                 // System.out.println("Combining tiles");
-               
-               //tile moved but cannot combine with left neighbor so place it where it stopped
-               else if(c != col)
-               {
-                  board[r][col].setValue(board[r][c].getValue()); // board[r][c] is a tile
-                  board[r][c].setValue(0);
-                 // System.out.println("Move but not combined");
-               }
+   public void moveLeft() {
+	    boolean[][] combined = new boolean[board.length][board[0].length];
+	    boolean hasMoved = false; // Track if any tiles were moved or merged
 
-            }
-         }
-      }//end of c loop
-   }//end of r loop
+	    for (int r = 0; r < board.length; r++) {
+	        for (int c = 1; c < board[0].length; c++) { // Start from the second column
+	            if (board[r][c].getValue() != 0) { // If not a zero
+	                //col is ... the column to the left of c with the first non-zero value to its left
+	                int col = c;
+	                while (col - 1 >= 0 && board[r][col - 1].getValue() == 0) {
+	                    col--;  // column should decrease 
+	                }
+
+	                //if col makes it to column 0 then move to that column
+	                if (col == 0) {
+	                    board[r][col].setValue(board[r][c].getValue());
+	                    board[r][c].setValue(0);
+	                    hasMoved = true; 
+	                }
+	                //if col is not the first column, see if col can combine with left neighbor
+	                else if (!combined[r][col - 1] && board[r][col - 1].getValue() == board[r][c].getValue()) {
+	                    int addScore = board[r][col - 1].getValue() + board[r][c].getValue();
+	                    board[r][col - 1].setValue(addScore);                
+	                    board[r][c].setValue(0);
+	                    combined[r][col - 1] = true;
+	                    score += addScore; // Update score
+	                    hasMoved = true; 
+	                }
+	                // System.out.println("Combining tiles");
+
+	                //tile moved but cannot combine with left neighbor so place it where it stopped
+	                else if (c != col) {
+	                    board[r][col].setValue(board[r][c].getValue());
+	                    board[r][c].setValue(0);
+	                    hasMoved = true;
+	                }
+	            }
+	        }
+	    }
+
+	    // update the highest score if any move was made
+	    if (hasMoved) {
+	        updateHighestScore();
+	        spawnValue(2); // Spawn a new tile after the move
+	    }
+	}
+   public void updateHighestScore() {
+	    if (score > highestScore) {
+	        highestScore = score; // Update highest score
+	    }
+	}
+
    public void moveRight() 
    {
       boolean[][] combined = new boolean[board.length][board[0].length];
@@ -419,7 +442,7 @@ public class Board2048
       return count;
          
    }
-   //21:00 P7
+ 
    public void spawnValue(int num)
    {//If I found an empty location, I want to set it to the spawned value.
       int numEmpty = getNumEmptyLocations();
