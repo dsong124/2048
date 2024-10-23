@@ -58,12 +58,12 @@ public class Board_2048
          for(int c = 0; c < board[r].length; c++)
             board[r][c].setValue(0);
       
-     
+     	    score = 0
   	    if (score > highestScore) {
   	        highestScore = score;
   	    }
   	
-  	    score = 0;
+  	    
   	  
       
       spawnValue(2);
