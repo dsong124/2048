@@ -8,10 +8,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-//Daniel Song
-//Program Description
-//May 18, 2021
-
 public class Board_2048
 {
    //Instance Variables
